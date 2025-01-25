@@ -29,7 +29,14 @@ class _NewItemState extends State<NewItem> {
                 maxLength: 50,
                 decoration: const InputDecoration(labelText: 'Name'),
                 validator: (value) {
-                  return null;
+                  if (value == null ||
+                      value.isEmpty ||
+                      value.length < 3 ||
+                      value.length > 50) {
+                    return 'Please enter a name';
+                  } else {
+                    return null;
+                  }
                 },
               ),
               Row(
@@ -41,7 +48,14 @@ class _NewItemState extends State<NewItem> {
                       keyboardType: TextInputType.number,
                       initialValue: '1',
                       validator: (value) {
-                        return null;
+                        if (value == null ||
+                            value.isEmpty ||
+                            int.tryParse(value) == null ||
+                            int.tryParse(value)! <= 0) {
+                          return 'Please enter a quantity';
+                        } else {
+                          return null;
+                        }
                       },
                     ),
                   ),
