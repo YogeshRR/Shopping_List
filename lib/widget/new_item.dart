@@ -15,6 +15,18 @@ class NewItem extends StatefulWidget {
 class _NewItemState extends State<NewItem> {
   @override
   Widget build(BuildContext context) {
+    final _formKey = GlobalKey<FormState>();
+    void _submitForm() {
+      final isValid = _formKey.currentState!.validate();
+      if (!isValid) {
+        return;
+      }
+    }
+
+    void resetForm() {
+      _formKey.currentState!.reset();
+    }
+
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(
@@ -23,6 +35,7 @@ class _NewItemState extends State<NewItem> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
+          key: _formKey,
           child: Column(
             children: [
               TextFormField(
@@ -86,11 +99,11 @@ class _NewItemState extends State<NewItem> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                    onPressed: () {},
+                    onPressed: resetForm,
                     child: const Text('Reset'),
                   ),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: _submitForm,
                     child: const Text('Add Button'),
                   ),
                 ],
