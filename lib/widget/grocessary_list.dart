@@ -28,7 +28,7 @@ class _GrocessaryListState extends State<GrocessaryList> {
   void loadItems() async {
     var response = await http.get(
       Uri.https(
-          'g999rocessarylist-default-rtdb.firebaseio.com', 'shoppingList.json'),
+          'grocessarylist-default-rtdb.firebaseio.com', 'shoppingList.json'),
     );
     groceryItems.clear();
     if (response.statusCode >= 400) {
@@ -69,6 +69,23 @@ class _GrocessaryListState extends State<GrocessaryList> {
     }
   }
 
+  void remoteItem(item) async {
+    var index = groceryItems.indexOf(item);
+    setState(() {
+      groceryItems.remove(item);
+    });
+    var response = await http.delete(
+      Uri.https('g9999rocessarylist-default-rtdb.firebaseio.com',
+          'shoppingList/${item.id}.json'),
+    );
+    if (response.statusCode >= 400) {
+      setState(() {
+        _errorMessage = 'An error occurred: ${response.body}';
+        groceryItems.insert(index, item);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,9 +110,7 @@ class _GrocessaryListState extends State<GrocessaryList> {
                       return Dismissible(
                         key: ValueKey(groceryItems[index].id),
                         onDismissed: (direction) {
-                          setState(() {
-                            groceryItems.removeAt(index);
-                          });
+                          remoteItem(groceryItems[index]);
                         },
                         child: ListTile(
                           title: Text(groceryItems[index].name),
