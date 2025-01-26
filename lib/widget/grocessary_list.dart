@@ -16,7 +16,7 @@ class GrocessaryList extends StatefulWidget {
 
 class _GrocessaryListState extends State<GrocessaryList> {
   List<GroceryItem> groceryItems = [];
-
+  var _isLoading = true;
   @override
   void initState() {
     // TODO: implement initState
@@ -43,6 +43,7 @@ class _GrocessaryListState extends State<GrocessaryList> {
 
       setState(() {
         groceryItems.add(groceryItem);
+        _isLoading = false;
       });
     }
   }
@@ -72,31 +73,33 @@ class _GrocessaryListState extends State<GrocessaryList> {
             )
           ],
         ),
-        body: groceryItems.length <= 0
-            ? const Center(
-                child: Text('No list item available'),
-              )
-            : ListView.builder(
-                itemCount: groceryItems.length,
-                itemBuilder: (context, index) {
-                  return Dismissible(
-                    key: ValueKey(groceryItems[index].id),
-                    onDismissed: (direction) {
-                      setState(() {
-                        groceryItems.removeAt(index);
-                      });
+        body: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : groceryItems.length <= 0
+                ? const Center(
+                    child: Text('No list item available'),
+                  )
+                : ListView.builder(
+                    itemCount: groceryItems.length,
+                    itemBuilder: (context, index) {
+                      return Dismissible(
+                        key: ValueKey(groceryItems[index].id),
+                        onDismissed: (direction) {
+                          setState(() {
+                            groceryItems.removeAt(index);
+                          });
+                        },
+                        child: ListTile(
+                          title: Text(groceryItems[index].name),
+                          leading: Container(
+                            width: 24,
+                            height: 24,
+                            color: groceryItems[index].category.color,
+                          ),
+                          trailing: Text('${groceryItems[index].quantity}'),
+                        ),
+                      );
                     },
-                    child: ListTile(
-                      title: Text(groceryItems[index].name),
-                      leading: Container(
-                        width: 24,
-                        height: 24,
-                        color: groceryItems[index].category.color,
-                      ),
-                      trailing: Text('${groceryItems[index].quantity}'),
-                    ),
-                  );
-                },
-              ));
+                  ));
   }
 }

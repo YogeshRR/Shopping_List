@@ -23,6 +23,7 @@ class _NewItemState extends State<NewItem> {
     var _selectedName = '';
     var _selectedQuantity = 1;
     var _selectedCategory = categories[Categories.vegetables];
+    var _isSending = false;
 
     void _submitForm() async {
       final isValid = _formKey.currentState!.validate();
@@ -46,6 +47,11 @@ class _NewItemState extends State<NewItem> {
       if (!context.mounted) {
         return;
       }
+
+      setState(() {
+        _isSending = true;
+      });
+
       Navigator.of(context).pop(
         GroceryItem(
           id: listData['name'],
@@ -142,12 +148,14 @@ class _NewItemState extends State<NewItem> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                    onPressed: resetForm,
+                    onPressed: _isSending ? null : resetForm,
                     child: const Text('Reset'),
                   ),
                   ElevatedButton(
                     onPressed: _submitForm,
-                    child: const Text('Add Button'),
+                    child: _isSending
+                        ? const CircularProgressIndicator()
+                        : const Text('Add Button'),
                   ),
                 ],
               )
