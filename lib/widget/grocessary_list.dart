@@ -17,6 +17,7 @@ class GrocessaryList extends StatefulWidget {
 class _GrocessaryListState extends State<GrocessaryList> {
   List<GroceryItem> groceryItems = [];
   var _isLoading = true;
+  var _errorMessage;
   @override
   void initState() {
     // TODO: implement initState
@@ -27,9 +28,16 @@ class _GrocessaryListState extends State<GrocessaryList> {
   void loadItems() async {
     var response = await http.get(
       Uri.https(
-          'grocessarylist-default-rtdb.firebaseio.com', 'shoppingList.json'),
+          'g999rocessarylist-default-rtdb.firebaseio.com', 'shoppingList.json'),
     );
     groceryItems.clear();
+    if (response.statusCode >= 400) {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = 'An error occurred: ${response.body}';
+      });
+      return;
+    }
     final listData = json.decode(response.body);
     for (final item in listData.entries) {
       final groceryItem = GroceryItem(
