@@ -26,32 +26,45 @@ class _GrocessaryListState extends State<GrocessaryList> {
   }
 
   void loadItems() async {
-    var response = await http.get(
-      Uri.https(
-          'grocessarylist-default-rtdb.firebaseio.com', 'shoppingList.json'),
-    );
-    groceryItems.clear();
-    if (response.statusCode >= 400) {
-      setState(() {
-        _isLoading = false;
-        _errorMessage = 'An error occurred: ${response.body}';
-      });
-      return;
-    }
-    final listData = json.decode(response.body);
-    for (final item in listData.entries) {
-      final groceryItem = GroceryItem(
-        id: item.key,
-        name: item.value['name'],
-        quantity: item.value['quantity'],
-        category: categories.values.firstWhere(
-          (element) => element.title == item.value['category'],
-        ),
+    try {
+      var response = await http.get(
+        Uri.https(
+            'grocessarylist-default-rtdb.firebaseio.com', 'shoppingList.json'),
       );
+      groceryItems.clear();
+      if (response.statusCode >= 400) {
+        setState(() {
+          _isLoading = false;
+          _errorMessage = 'An error occurred: ${response.body}';
+        });
+        return;
+      }
+      if (response.body == 'null') {
+        setState(() {
+          _isLoading = false;
+        });
 
+        return;
+      }
+      final listData = json.decode(response.body);
+      for (final item in listData.entries) {
+        final groceryItem = GroceryItem(
+          id: item.key,
+          name: item.value['name'],
+          quantity: item.value['quantity'],
+          category: categories.values.firstWhere(
+            (element) => element.title == item.value['category'],
+          ),
+        );
+
+        setState(() {
+          groceryItems.add(groceryItem);
+          _isLoading = false;
+        });
+      }
+    } catch (error) {
       setState(() {
-        groceryItems.add(groceryItem);
-        _isLoading = false;
+        _errorMessage = 'Something went wrong';
       });
     }
   }
@@ -75,7 +88,7 @@ class _GrocessaryListState extends State<GrocessaryList> {
       groceryItems.remove(item);
     });
     var response = await http.delete(
-      Uri.https('g9999rocessarylist-default-rtdb.firebaseio.com',
+      Uri.https('grocessarylist-default-rtdb.firebaseio.com',
           'shoppingList/${item.id}.json'),
     );
     if (response.statusCode >= 400) {
