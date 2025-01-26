@@ -53,7 +53,11 @@ class _GrocessaryListState extends State<GrocessaryList> {
         builder: (context) => const NewItem(),
       ),
     );
-    loadItems();
+    if (newItem != null) {
+      setState(() {
+        groceryItems.add(newItem);
+      });
+    }
   }
 
   @override

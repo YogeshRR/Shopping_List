@@ -41,11 +41,19 @@ class _NewItemState extends State<NewItem> {
         }),
       );
       print(response.body);
+      final listData = json.decode(response.body);
       print(response.statusCode);
       if (!context.mounted) {
         return;
       }
-      Navigator.of(context).pop();
+      Navigator.of(context).pop(
+        GroceryItem(
+          id: listData['name'],
+          name: _selectedName,
+          quantity: _selectedQuantity,
+          category: _selectedCategory ?? categories[Categories.vegetables]!,
+        ),
+      );
     }
 
     void resetForm() {
